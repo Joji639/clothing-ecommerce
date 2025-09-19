@@ -1,0 +1,292 @@
+{
+  "cards": [
+    {
+      "img": "https://m.media-amazon.com/images/I/51XpuM2tC+L._UY1100_.jpg",
+      "id": "1",
+      "title": "mens wear"
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/bf/ec/bfecd2ba9edaec62b344209b7d86ef88ff523074.jpg?imwidth=1536",
+      "id": "2",
+      "title": "ladies wear",
+      "a": 28347
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/38/2f/382f60ae49650c91b69b335ddb7355c788fd7d41.jpg?imwidth=1260",
+      "id": "3",
+      "title": "Kids wear",
+      "a": 7429854
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/04/b7/04b7bfbb65f9ba8084e869d8d1d8627b7a242a9c.jpg?imwidth=1260",
+      "id": "4",
+      "title": "unisex wears"
+    }
+  ],
+  "Products": [
+    {
+      "img": "https://image.hm.com/assets/hm/08/18/08181464b0c02182d531db69664cf166c2fd664c.jpg?imwidth=1536",
+      "title": "Flared velour trousers",
+      "category": "women",
+      "id": "1",
+      "price": 446
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/0f/a9/0fa9632ba090c0773929e47729aea2998c9366f5.jpg?imwidth=1536",
+      "title": "Flounce-collar dress",
+      "category": "women",
+      "id": "2",
+      "price": 1999
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/13/4d/134d5d1ac5b9f1229df3d2eb5ec35e9566731c24.jpg?imwidth=1536",
+      "title": "Frill-trimmed cardigan",
+      "category": "women",
+      "id": "3",
+      "price": 1200
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/f0/64/f0641876c8bfa4f99292edee824ba57896f75c4d.jpg?imwidth=1536",
+      "title": "Velour top",
+      "category": "women",
+      "id": "4",
+      "price": 1421
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/0d/b1/0db1f32c1b7349c4fc0379827dd834e056a8e892.jpg?imwidth=1536",
+      "title": "Flocked denim jacket",
+      "category": "women",
+      "id": "5",
+      "price": 2312
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/e9/ac/e9ac3ba7bbb6863c5861b7ae42bc060914de54d5.jpg?imwidth=1536",
+      "title": "Stand-collar vest top",
+      "category": "women",
+      "id": "6",
+      "price": 1856
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/cc/3f/cc3fbd36793356ba39c53e543a3637b110faa8b5.jpg?imwidth=1536",
+      "title": "Frill-trimmed dress",
+      "category": "women",
+      "id": "7",
+      "price": 1256
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/4e/2d/4e2d5f6ba4267c0c1d153e1e8ab1c87aa79bd363.jpg?imwidth=1536",
+      "title": "Flared skirt",
+      "category": "women",
+      "id": "8",
+      "price": 1567
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/de/a0/dea09120c09d0462e0db9a44ffeeeb27ab30d2d6.jpg?imwidth=1536",
+      "title": "Flocked Wide Ultra High Jeans",
+      "category": "women",
+      "id": "9",
+      "price": 2099
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/fd/71/fd71cc9fd22e21dc773eb0180a7b78779a709ac5.jpg?imwidth=1536",
+      "title": "Long waistcoat",
+      "category": "women",
+      "id": "10",
+      "price": 384
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/9a/39/9a397e6f5ce44abffc245b96091ca5c157d8972f.jpg?imwidth=1536",
+      "title": "Flocked denim jacket",
+      "category": "men",
+      "id": "11",
+      "price": 1237
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/4e/5d/4e5dbb141ca65688dc0ff09156aced14646314ed.jpg?imwidth=1536",
+      "title": "Relaxed Fit Twill shirt",
+      "category": "men",
+      "id": "12",
+      "price": 795
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/7e/85/7e85c0774502b8b270cb0a31f428f4468a251ff2.jpg?imwidth=1536",
+      "title": "Loose Fit Zip-through hoodie",
+      "category": "men",
+      "id": "13",
+      "price": 852
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/78/cb/78cb4774416c9347b033bf181c5e123b21f4dfb3.jpg?imwidth=1536",
+      "title": "Relaxed Fit Poplin shirt",
+      "category": "men",
+      "id": "14",
+      "price": 951
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/d3/63/d36320514a35147049affdc66559ae97509585e7.jpg?imwidth=1536",
+      "title": "Loose Fit Zip-through hoodie",
+      "category": "men",
+      "id": "15",
+      "price": 494
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/0d/7f/0d7fd3401a16256f0a2c3fa26df75080b6aa642d.jpg?imwidth=1536",
+      "title": "Regular Fit Knitted short-sleeved shirt",
+      "category": "men",
+      "id": "16",
+      "price": 752
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/6f/88/6f8873e10426ba3409ed5de29a9bb80190cf8de1.jpg?imwidth=1536",
+      "title": "Regular Fit Brushed cardigan",
+      "category": "men",
+      "id": "17",
+      "price": 423
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/bc/43/bc4346e675ae9f49feba378ea203b56e05be63cb.jpg?imwidth=1536",
+      "title": "Relaxed Fit Shirt",
+      "category": "men",
+      "id": "18",
+      "price": 582
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/01/4e/014ed9d0fa39b353217c8a72d48af4c2bd02f696.jpg?imwidth=1536",
+      "title": "Relaxed Jeans",
+      "category": "men",
+      "id": "19",
+      "price": 789
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/b6/37/b63788461d6ca96fe69c39f286eba1b9e30c8408.jpg?imwidth=1536",
+      "title": "Relaxed Fit Shirt",
+      "category": "men",
+      "id": "20",
+      "price": 1478
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/be/3a/be3a839c23a60afc25ac56acbbc3d3bf35d2b054.jpg?imwidth=1536",
+      "title": "Regular Fit Chenille jumper",
+      "category": "men",
+      "id": "21",
+      "price": 1474
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/f0/3e/f03e3083b7bb8e4879967894c064b3d6ec8fba18.jpg?imwidth=1536",
+      "title": "Regular Fit Brushed cardigan",
+      "category": "men",
+      "id": "22",
+      "price": 1144
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/88/9d/889d362cc61d17b78ba3b60fad3bef748fa48ab9.jpg?imwidth=384",
+      "title": "Print-motif sweatshirt",
+      "category": "kids",
+      "id": "23",
+      "price": 1152
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/97/00/9700562a40b36b5e6f1d1442e47a96333c059f79.jpg?imwidth=384",
+      "title": "Denim joggers",
+      "category": "kids",
+      "id": "24",
+      "price": 856
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/52/dd/52ddaec130a540b598f296f3b2b9afede48ce5c8.jpg?imwidth=418",
+      "title": "Cotton-blend resort shirt",
+      "category": "kids",
+      "id": "25",
+      "price": 325
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/73/80/738030776ecdba5b87503f0a72f70941be7b2bb5.jpg?imwidth=418",
+      "title": "2-piece cotton set",
+      "category": "kids",
+      "id": "26",
+      "price": 833
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/03/91/039131685575df20bc34d5a1eb4ffd5e85464687.jpg?imwidth=418",
+      "title": "Loose Fit denim shorts",
+      "category": "kids",
+      "id": "27",
+      "price": 588
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/4a/54/4a543333a391f2b767854460982772676449b6f4.jpg?imwidth=418",
+      "title": "Linen-blend resort shirt",
+      "category": "kids",
+      "id": "28",
+      "price": 4545
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/ed/31/ed31651ce17fa7f94fbfab4bef3c71bb4d53a9ff.jpg?imwidth=418",
+      "title": "Printed resort shirt",
+      "category": "kids",
+      "id": "29",
+      "price": 5255
+    },
+    {
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSemXlT56B6oieNrgIn0ByzzHQLYOPkFCe-pw&s",
+      "title": "Cotton-blend resort jacket",
+      "category": "unisex",
+      "id": "30",
+      "price": 2044
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/5e/33/5e33bd3764735139b84be640c69b243e3f6f3351.jpg?imwidth=1536",
+      "title": "Loose Fit Zip-top sweatshirt",
+      "category": "unisex",
+      "id": "31",
+      "price": 448
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/06/9d/069daeb49bcbb657c2d5515040b2d48015d5fbab.jpg?imwidth=1260",
+      "title": "Regular Fit Collared cardigan",
+      "category": "unisex",
+      "id": "32",
+      "price": 445
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/5c/f9/5cf96a9253fe56cbda1c43285f863262c524a224.jpg?imwidth=1260",
+      "title": "Collared jacket",
+      "category": "unisex",
+      "id": "33",
+      "price": 456
+    },
+    {
+      "img": "https://image.hm.com/assets/hm/29/ef/29ef74716b943c8054afb4c2d9b49b56a6d643d7.jpg?imwidth=418",
+      "title": "Regular Fit Zip-top jumper",
+      "category": "unisex",
+      "id": "34",
+      "price": 2345
+    }
+  ],
+  "user": [
+    {
+      "id": "9e0a",
+      "name": "abhijith",
+      "email": "abhi@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "4002",
+      "name": "abhijith",
+      "email": "abhi@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "6ca4",
+      "name": "abhijith",
+      "email": "abhi@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "395d",
+      "name": "rahul",
+      "email": "rahul@gmail.com",
+      "password": "123321"
+    }
+  ]
+}
