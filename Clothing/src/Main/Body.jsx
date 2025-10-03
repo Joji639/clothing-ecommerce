@@ -1,25 +1,13 @@
 import React, { useEffect } from 'react';
 import Nav from './Nav';
 import Footer from './Footer';
-import Cards from "../Components/Cards"
+import Cards from "../Components/BestSeller"
 import { useState } from 'react';
 import axios from 'axios';
-import ProductCard from '../Components/ProductCart';
+import ProductCard from '../Components/ProductCard';
 import toast from 'react-hot-toast';
 const Body = () => {
-const [Card,SetCard]=useState([])
-useEffect(()=>{
- const FetchData=async()=>{
-    try{
-      const res= await axios.get("http://localhost:5000/cards")
-      SetCard(res.data)
-    }
-    catch(error){
-      console.error(error)
-    }
-  }
-  FetchData();
-  },[])
+
   const handleClick=()=>{
     toast.success("tasted")
   }
@@ -55,7 +43,7 @@ useEffect(()=>{
   </div>
 </section>
 
-    <Cards items={Card}/>
+    <Cards/>
 
     </main>
     

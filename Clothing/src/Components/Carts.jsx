@@ -1,19 +1,26 @@
-// src/Products/Carts.jsx
 import React from "react";
-import { useCart } from "../Context/cartcontext";
+import { useCart } from "../Context/CartContext";
 import { Trash2 } from "lucide-react";
-
+import { Link } from "react-router-dom";
+import Nav from "../Main/Nav";
 const Carts = () => {
-  const { cart, increase, decrease, removeFromCart, totalAmount } = useCart();
+  const { CartItem, incrementQuantity, decrementQuantity, removeFromCart, SetCartItem } = useCart();
 
+  const totalPrice = CartItem.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
   return (
+    <>
+    <Nav/>
     <div className="p-6">
+      
       <h2 className="text-2xl font-bold mb-4">My Cart</h2>
-      {cart.length === 0 ? (
+      {CartItem.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
         <div className="space-y-4">
-          {cart.map((item) => (
+          {CartItem.map((item) => (
             <div
               key={item.id}
               className="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow"
@@ -29,14 +36,15 @@ const Carts = () => {
                   <p>₹{item.price}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <button
-                      onClick={() => decrease(item.id)}
+                      onClick={() => decrementQuantity(item.id)}
                       className="px-2 py-1 bg-gray-300 rounded"
+                      disabled={item.quantity <= 1} 
                     >
                       -
                     </button>
                     <span>{item.quantity}</span>
                     <button
-                      onClick={() => increase(item.id)}
+                      onClick={() => incrementQuantity(item.id)}
                       className="px-2 py-1 bg-gray-300 rounded"
                     >
                       +
@@ -49,13 +57,26 @@ const Carts = () => {
               </button>
             </div>
           ))}
+
           <div className="text-right mt-6">
-            <h3 className="text-xl font-bold">Total: ₹{totalAmount}</h3>
+            <h3 className="text-xl font-bold">Total: ₹{totalPrice}</h3>
+          </div>
+
+          <div className="text-right mt-4">
+            <Link to={"/paymentpage"}>
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+
+            >
+              Place Order
+            </button>
+            </Link>
+            
           </div>
         </div>
       )}
     </div>
-  );
+  </>);
 };
 
 export default Carts;

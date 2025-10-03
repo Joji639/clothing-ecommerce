@@ -1,61 +1,62 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import * as Yup from 'yup';
 import toast from "react-hot-toast";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../Context/AuthContext";
 const SignUpPage = () => {
   const navigate=useNavigate();
-  const validationSchema = Yup.object({
-    name: Yup.string()
-      .min(3, "Name must be at least 3 characters")
-      .required("Name is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Confirm Password is required"),
-  });
-  const handleSubmit = async (values,{  resetForm }) => {
+  const{login}=useAuth()
+ const validationSchema = Yup.object({
+  name: Yup.string()
+    .trim("Name must be alphabets") 
+    .strict(true) 
+    .min(3, "Name must be at least 3 characters")
+    .matches(/^[A-Za-z ]+$/, "Name can only contain letters and spaces")    
+    .required("Name is required"),
+
+  email: Yup.string()
+    .trim()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .trim("Password cannot include leading/trailing spaces")
+    .strict(true)
+    .min(6, "Password must be at least 6 characters")
+    .matches(/^(?!\s*$).+/, "Password cannot be empty or just spaces")
+    .required("Password is required"),
+
+  confirmPassword: Yup.string()
+    .trim()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
+});
+
+  const handleSubmit = async (values, { resetForm }) => {
   try {
-    const { confirmPassword, ...userData } = values; 
-    const res = await axios.post("http://localhost:5000/user", userData);
-    console.log("Saved:", res.data);
+    const { confirmPassword, ...userData } = values;
+    const UserwithRole={ ...userData, status: "user"}
+    const existing = await axios.get("http://localhost:5000/user", {
+      params: { email: userData.email },
+    });
+
+    if (existing.data.length > 0) {
+      toast.error("User already exists!");
+      return; 
+    }
+
+    const res = await axios.post("http://localhost:5000/user", UserwithRole);
+    // console.log("Saved:",res.data);
     toast.success("User saved successfully!");
-    // login(userData)
-    navigate("/")
+    login(UserwithRole)
+    navigate("/");
     resetForm();
-    // return navigate("/AllProducts")
   } catch (error) {
     console.error(error);
-    // toast.error("Error saving user");
-  } 
+    toast.error("Error saving user");
+  }
 };
-
-
-
-
-// const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-//   try {
-//     const { confirmPassword, ...userData } = values; 
-//     const res = await axios.post("http://localhost:5000/users", userData);
-//     console.log("Saved:", res.data);
-//     toast.success("User saved successfully!");
-//     login(userData)
-//     resetForm();
-//     return navigate("/AllProducts")
-//   } catch (error) {
-//     console.error(error);
-//     toast.error("Error saving user");
-//   } finally {
-//     setSubmitting(false);
-//   }
-// };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
@@ -132,9 +133,9 @@ const SignUpPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" onClick={handleSubmit}
+                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" 
               >
-                {isSubmitting ? "Creating..." : "Sign Up"}
+                Signin
               </button>
             </Form>
           )}
