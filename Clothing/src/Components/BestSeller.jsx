@@ -24,10 +24,8 @@ useEffect(()=>{
 
   return (
     <>
-    {/* <Link to="/AllProducts"> */}
     <h1 className="font-bold text-[50px] text-center mt-3 ">BEST SELLERS</h1>
     <ProductCard pcard={filtered}/>
-      {/* </Link> */}
       </>
   )
 }

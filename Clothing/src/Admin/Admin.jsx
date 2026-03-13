@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import { Outlet } from "react-router-dom";
 import DashboardBar from "./DashBoardBar";
-
 const Admin = () => {
   const [collapsed, setCollapsed] = useState(true); 
   return (

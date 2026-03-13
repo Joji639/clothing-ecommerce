@@ -10,7 +10,6 @@ export default function OrdersAdminPage() {
   useEffect(() => {
     fetchUsers();
   }, []);
-
   const fetchUsers = async () => {
     try {
       const res = await axios.get(API);
@@ -31,7 +30,6 @@ export default function OrdersAdminPage() {
 
     const currentOrder = user.orders[orderIdx];
 
-    // Prevent moving backwards
     const statusOrder = ["Pending", "Shipping", "Delivered"];
     const currentIndex = statusOrder.indexOf(currentOrder.status);
     const newIndex = statusOrder.indexOf(newStatus);
@@ -41,7 +39,6 @@ export default function OrdersAdminPage() {
       return;
     }
 
-    // Update order
     const updatedOrders = [...user.orders];
     updatedOrders[orderIdx] = { ...currentOrder, status: newStatus };
 
@@ -57,7 +54,7 @@ export default function OrdersAdminPage() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">📦 Orders Admin</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800"> Orders Admin</h1>
 
       <div className="overflow-x-auto bg-white shadow-md rounded-xl">
         <table className="min-w-full text-sm text-gray-700">

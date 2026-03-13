@@ -66,11 +66,6 @@ const AllProducts = () => {
 </div>: 
             <ProductCard pcard={filteredCategory} />}
       </div>
-    
-    {/* <div>
-      
-      <ProductCard pcard={filteredCategory} />
-    </div> */}
     </>
   )
 }

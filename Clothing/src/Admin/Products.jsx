@@ -10,7 +10,7 @@ export default function ProductsPage() {
     category: "",
     price: "",
   });
-  const [editingId, setEditingId] = useState(null); // track which product is being edited
+  const [editingId, setEditingId] = useState(null); 
 
   useEffect(() => {
     fetchProducts();
@@ -42,14 +42,12 @@ export default function ProductsPage() {
 
     try {
       if (editingId) {
-        // update product (PUT requires full object with id)
         await axios.put(`http://localhost:5000/Products/${editingId}`, {
           ...newProduct,
           id: editingId,
         });
         setEditingId(null);
       } else {
-        // add new product
         await axios.post("http://localhost:5000/Products", newProduct);
       }
 
@@ -75,7 +73,6 @@ export default function ProductsPage() {
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4">Products</h1>
 
-      {/* Add/Edit Product Form */}
       <div className="mb-6 flex gap-2 flex-wrap">
         <input
           type="text"
@@ -134,7 +131,6 @@ export default function ProductsPage() {
         )}
       </div>
 
-      {/* Products Table */}
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-100">

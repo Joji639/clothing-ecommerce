@@ -9,13 +9,13 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 
-import { SlMenu } from "react-icons/sl";//ham
-import { RxCross1 } from "react-icons/rx";//cross
-import { FiUser } from "react-icons/fi";//user
-import { IoExitOutline } from "react-icons/io5";//logout
-import { LuLayoutDashboard } from "react-icons/lu";//dashboard
-import { BsBox2 } from "react-icons/bs";//box
-import { LiaShippingFastSolid } from "react-icons/lia";//order
+import { SlMenu } from "react-icons/sl";
+import { RxCross1 } from "react-icons/rx";
+import { FiUser } from "react-icons/fi";
+import { IoExitOutline } from "react-icons/io5";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { BsBox2 } from "react-icons/bs";
+import { LiaShippingFastSolid } from "react-icons/lia";
 import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 import { useContext } from "react";
@@ -105,7 +105,6 @@ const DashBoardBar = () => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-{/* Navbar */}
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <button
@@ -126,7 +125,6 @@ const DashBoardBar = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer */}
       <Drawer variant="permanent" open={open} className="">
         <DrawerHeader>
           <button className="" onClick={handleDrawerClose}>

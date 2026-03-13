@@ -7,13 +7,13 @@ import { Link } from "react-router-dom";
 const OrderPage = () => {
   const { user } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
-
+console.log(orders)
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user?.id) return;
       try {
         const res = await axios.get(`http://localhost:5000/user/${user.id}`);
-        setOrders(res.data.orders || []);
+        setOrders(res.data.orders.reverse()|| []);
       } catch (err) {
         console.error("Error fetching orders:", err);
       }

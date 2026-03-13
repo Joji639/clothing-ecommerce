@@ -1,4 +1,3 @@
-//
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -20,10 +19,9 @@ const UserPage = () => {
       }
     };
 
-    setTimeout(fetchUsers, 1000); // 2s delay for demo
+    setTimeout(fetchUsers, 1000); 
   }, []);
 
-  // Delete User Function
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
@@ -34,8 +32,6 @@ const UserPage = () => {
       }
     }
   };
-
-  // Toggle User Status
   const toggleStatus = async (id, newStatus) => {
     try {
       await axios.patch(`http://localhost:5000/user/${id}`, {
@@ -51,7 +47,6 @@ const UserPage = () => {
     }
   };
 
-  // Skeleton rows
   const renderSkeletonRows = () => {
     return Array.from({ length: 5 }).map((_, index) => (
       <tr key={index} className="bg-white hover:bg-gray-50">
@@ -73,12 +68,13 @@ const UserPage = () => {
       </tr>
     ));
   };
+  const filteredusers=users.filter((user)=>user.role!=="admin")
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">User Management</h1>
 
-      <div className="overflow-x-auto shadow-lg rounded-xl">
+      <div className="overflow-x-auto shad  ow-lg rounded-xl">
         <table className="w-full border-collapse bg-white rounded-xl overflow-hidden">
           <thead>
             <tr className="bg-gray-200 text-left text-gray-700 uppercase text-sm">
@@ -92,7 +88,7 @@ const UserPage = () => {
           <tbody>
             {loading
               ? renderSkeletonRows()
-              : users.map((user, idx) => (
+              : filteredusers.map((user, idx) => (
                   <tr key={user.id}>
                     <td className="border px-4 py-2">{user.id}</td>
                     <td className="border px-4 py-2 font-medium text-gray-700">

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -14,10 +15,9 @@ const validationSchema = Yup.object({
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
 });
-
 const FormikValidationForm = () => {
   const navigate = useNavigate();
-  const{login}=useAuth()
+  const { login } = useAuth();
 
   const handleLogin = async (values, resetForm) => {
     try {
@@ -28,24 +28,37 @@ const FormikValidationForm = () => {
         },
       });
 
-      if ((res.data.length > 0)&&(res.data[0].status!=="suspend")) {
-        login(res.data[0])
-        console.log(res.data[0].status)
+      if (res.data.length > 0 && res.data[0].status !== "suspend") {
+        const userData = res.data[0];
+
+        const finalUser = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role || "user",
+          
+        };
+
+        login(finalUser);
+
         toast.success("Login successful!");
-        console.log("User Found:", res.data[0]);
+        console.log("User logged in:", finalUser);
+
+        if (finalUser.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+      } 
+      else if (res.data.length > 0 && res.data[0].status === "suspend") {
+        toast.error("Your account is suspended ❌");
         navigate("/");
-      }
-      else if((res.data.length > 0)&&(res.data[0].status=="suspend"))
-      {
-        toast.error("your account is suspended" )
-          navigate("/")
-       
-      }
-      
+      } 
       else {
         toast.error("User not found. Please sign up.");
         navigate("/Signin");
       }
+
       resetForm();
     } catch (err) {
       console.error("Login error:", err);
@@ -54,60 +67,63 @@ const FormikValidationForm = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-    <div className="max-w-md mx-auto p-6 rounded-2xl  shadow-lg bg-white">
-      <h2 className="text-xl font-bold mb-4">Login</h2>
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        validationSchema={validationSchema}
-        onSubmit={(values, { resetForm }) => handleLogin(values, resetForm)}
-      >
-        {({ isSubmitting }) => (
-          <Form className="space-y-4">
-            <div>
-              <label className="block font-medium">Email</label>
-              <Field
-                type="email"
-                name="email"
-                className="w-full p-2 border rounded-2xl"
-              />
-              <ErrorMessage
-                name="email"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block font-medium">Password</label>
-              <Field
-                type="password"
-                name="password"
-                className="w-full p-2 border rounded-2xl"
-              />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className=" bg-blue-600 text-white py-2 w-full hover:bg-blue-700 rounded-2xl "
-            >
-              Submit
-            </button>
-          </Form>
-        )}
-      </Formik>
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="max-w-md w-full bg-white shadow-lg rounded-2xl p-6">
+        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
-      <h2 className="mt-4">
-        Don't have an account?
-        <Link to="/Signin">
-          <span className="text-red-500 font-semibold"> create one</span>
-        </Link>
-      </h2>
-    </div>
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={validationSchema}
+          onSubmit={(values, { resetForm }) => handleLogin(values, resetForm)}
+        >
+          {({ isSubmitting }) => (
+            <Form className="space-y-4">
+              <div>
+                <label className="block font-medium">Email</label>
+                <Field
+                  type="email"
+                  name="email"
+                  className="w-full p-2 border rounded-2xl"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium">Password</label>
+                <Field
+                  type="password"
+                  name="password"
+                  className="w-full p-2 border rounded-2xl"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-blue-600 text-white py-2 w-full hover:bg-blue-700 rounded-2xl"
+              >
+                {isSubmitting ? "Logging in..." : "Submit"}
+              </button>
+            </Form>
+          )}
+        </Formik>
+
+        <h2 className="mt-4 text-center text-sm">
+          Don’t have an account?
+          <Link to="/Signin">
+            <span className="text-red-500 font-semibold"> Create one</span>
+          </Link>
+        </h2>
+      </div>
     </div>
   );
 };

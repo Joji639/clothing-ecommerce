@@ -36,7 +36,7 @@ const SignUpPage = () => {
   const handleSubmit = async (values, { resetForm }) => {
   try {
     const { confirmPassword, ...userData } = values;
-    const UserwithRole={ ...userData, status: "user"}
+    const UserwithRole={ ...userData, role: "user", status: "user"}
     const existing = await axios.get("http://localhost:5000/user", {
       params: { email: userData.email },
     });
@@ -47,7 +47,6 @@ const SignUpPage = () => {
     }
 
     const res = await axios.post("http://localhost:5000/user", UserwithRole);
-    // console.log("Saved:",res.data);
     toast.success("User saved successfully!");
     login(UserwithRole)
     navigate("/");

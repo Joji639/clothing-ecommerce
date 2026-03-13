@@ -11,6 +11,7 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+ 
   useEffect(() => {
     if (user?.id) {
       axios
@@ -18,7 +19,7 @@ export const CartProvider = ({ children }) => {
         .then((res) => {
           SetCartItem(res.data.cart || []);
         })
-        .catch((err) => console.error(" Error fetching cart:", err));
+        .catch((err) => console.error("Error fetching cart:", err));
     } else {
       SetCartItem([]);
     }
@@ -32,38 +33,54 @@ export const CartProvider = ({ children }) => {
       });
     } catch (err) {
       console.error("Error updating cart:", err);
+      throw err;
     }
   };
 
   const AddToCart = async (product) => {
     if (!user) {
-      toast.error("please sign in to use this feature ");
-      return navigate("/signin");
+      toast.error("Please sign in to use this feature");
+      return navigate("/Signin");
     }
-    let updatedCart;
-    updatedCart = [...CartItem, { ...product, quantity: 1 }];
-    updateCart(updatedCart);
+    if (user.role === "admin") {
+      toast.error("Admins cannot add products to cart");
+      return;
+    }
+
+    const updatedCart = [...CartItem, { ...product, quantity: 1 }];
     SetCartItem(updatedCart);
-    toast.success("Added to Cart ");
+    try {
+      await updateCart(updatedCart);
+      toast.success("Added to Cart");
+    } catch {
+      toast.error("Failed to add to cart. Please try again.");
+    }
   };
 
-  const removeFromCart = (id) => {
-    let updatedCart;
-    updatedCart = CartItem.filter((item) => item.id !== id);
-    updateCart(updatedCart);
+  const removeFromCart = async (id) => {
+    const updatedCart = CartItem.filter((item) => item.id !== id);
     SetCartItem(updatedCart);
-    toast.error("Removed from cart");
+    try {
+      await updateCart(updatedCart);
+      toast.error("Removed from cart");
+    } catch {
+      toast.error("Failed to remove item. Please try again.");
+    }
   };
 
-  const incrementQuantity = (id) => {
+  const incrementQuantity = async (id) => {
     const updatedCart = CartItem.map((item) =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      item.id === id ? { ...item, quantity: (Number(item.quantity) || 1) + 1 } : item
     );
     SetCartItem(updatedCart);
-    updateCart(updatedCart);
+    try {
+      await updateCart(updatedCart);
+    } catch {
+      toast.error("Failed to update quantity");
+    }
   };
 
-  const decrementQuantity = (id) => {
+  const decrementQuantity = async (id) => {
     const updatedCart = CartItem.map((item) => {
       if (item.id === id) {
         const newQuantity = Math.max(Number(item.quantity ?? 1) - 1, 1);
@@ -71,36 +88,52 @@ export const CartProvider = ({ children }) => {
       }
       return item;
     });
-
     SetCartItem(updatedCart);
-    updateCart(updatedCart);
+    try {
+      await updateCart(updatedCart);
+    } catch {
+      toast.error("Failed to update quantity");
+    }
   };
 
-  const EmptyCart = async () => {
-    if (!user?.id) return;
-    let now = new Date();
-    let updatedCart = [...CartItem];
+  
+  const EmptyCart = async ({ saveAsOrder = true } = {}) => {
+    if (!user?.id) return false;
+    if (user.role === "admin") {
+      toast.error("Admins cannot place orders");
+      return false;
+    }
 
     try {
-      const { data: latestUser } = await axios.get(
-        `http://localhost:5000/user/${user.id}`
-      );
-
+      const { data: latestUser } = await axios.get(`http://localhost:5000/user/${user.id}`);
+      const now = new Date();
       const orderDate = now.toLocaleDateString();
       const orderTime = now.toLocaleTimeString();
 
-      const OrderDetails = updatedCart.map((item) => ({
+      const currentCart = latestUser.cart || [];
+
+      const orderDetails = currentCart.map((item) => ({
         ...item,
         date: orderDate,
         time: orderTime,
         status: "pending",
       }));
-    } catch (err) {
-      console.error("Error updating cart:", err);
-      toast.error("Something went wrong while placing the order");
-    }
 
-    SetCartItem([]);
+      const newOrders = saveAsOrder ? [...(latestUser.orders || []), ...orderDetails] : (latestUser.orders || []);
+
+      await axios.patch(`http://localhost:5000/user/${user.id}`, {
+        orders: newOrders,
+        cart: [],
+      });
+
+      SetCartItem([]);
+      toast.success("Order placed successfully! Cart cleared.");
+      return true;
+    } catch (err) {
+      console.error("Error emptying cart:", err);
+      toast.error("Something went wrong while placing the order");
+      return false;
+    }
   };
 
   return (
@@ -108,8 +141,8 @@ export const CartProvider = ({ children }) => {
       value={{
         CartItem,
         SetCartItem,
-        removeFromCart,
         AddToCart,
+        removeFromCart,
         incrementQuantity,
         decrementQuantity,
         EmptyCart,
@@ -119,4 +152,5 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
 export const useCart = () => useContext(CartContext);

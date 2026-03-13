@@ -3,11 +3,12 @@ import { useCart } from "../Context/CartContext";
 import { RiHeart3Fill, RiHeart3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { WishlistContext } from "../Context/WishListContext";
-
+import {useDispatch} from "react-redux"
+import { addToCart } from "../cartSlice";
 const ProductCard = ({ pcard }) => {
   const { CartItem, AddToCart } = useCart();
   const { toggleWishList, WishList } = useContext(WishlistContext);
-
+const dispatch = useDispatch()
   return (
     <div className="grid sm:grid-cols-1 lg:grid-cols-4 cursor-pointer gap-6 p-[50px] m-[10px]">
       {pcard.map((product, idx) => {
@@ -59,10 +60,11 @@ const ProductCard = ({ pcard }) => {
                  
                 ) : (
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation(); 
-                        AddToCart(product);
-                      }}
+                      // onClick={(e) => {
+                      //   e.stopPropagation(); 
+                      //   AddToCart(product);
+                      // }}
+                      onClick={()=>dispatch(addToCart(product))}
                       className="bg-white rounded-lg hover:bg-blue-400 w-full mb-1 border-[1px] cursor-pointer transition-all ease-in-out"
                     >
                       ADD TO CART
