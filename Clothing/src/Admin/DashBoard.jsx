@@ -1,133 +1,143 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
+import { Bar } from "react-chartjs-2";
+
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
   Tooltip,
-  CartesianGrid,
-  PieChart,
-  Pie,
-  Cell,
   Legend,
-  ResponsiveContainer,
-} from "recharts";
+} from "chart.js";
 
-const API_USERS = "http://localhost:5000/user";
-const API_PRODUCTS = "http://localhost:5000/Products";
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-export default function DashBoard() {
-  const [users, setUsers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [revenue, setRevenue] = useState(0);
+const DashBoard = () => {
+  const [stats, setStats] = useState({
+    users: 0,
+    products: 0,
+    orders: 0,
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
+  const fetchDashboard = async () => {
     try {
-      const [usersRes, productsRes] = await Promise.all([
-        axios.get(API_USERS),
-        axios.get(API_PRODUCTS),
-      ]);
-
-      setUsers(usersRes.data);
-      setProducts(productsRes.data);
-
-      const allOrders = usersRes.data.flatMap((u) => u.orders || []);
-      setOrders(allOrders);
-
-      const totalRev = allOrders
-        .filter((o) => o.status?.toLowerCase() === "delivered")
-        .reduce((sum, o) => sum + (o.price * (o.quantity || 1)), 0);
-      setRevenue(totalRev);
-    } catch (err) {
-      console.error("Error fetching dashboard data:", err);
+      const res = await api.get("/admin-api/dashboard/");
+      setStats(res.data);
+    } catch (error) {
+      console.error("Dashboard error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const activeUsers = users.filter((u) => u.status === "user").length;
-  const suspendedUsers = users.filter((u) => u.status === "suspend").length;
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
 
-  const lineData = orders.map((o) => ({
-    date: o.date,
-    profit: o.price * (o.quantity || 1),
-  }));
+  const chartData = {
+  labels: ["Users", "Products", "Orders"],
+  datasets: [
+    {
+      label: "Analytics Overview",
+      data: [stats.users, stats.products, stats.orders],
 
-  const categoryCounts = orders.reduce((acc, o) => {
-    if (o.category) {
-      acc[o.category] = (acc[o.category] || 0) + 1;
-    }
-    return acc;
-  }, {});
+      // 🎨 COLORS
+      backgroundColor: [
+        "#3B82F6", 
+        "#10B981", 
+        "#8B5CF6", 
+      ],
 
-  const pieData = Object.entries(categoryCounts).map(([category, count]) => ({
-    name: category,
-    value: count,
-  }));
+      borderRadius: 8,
+    },
+  ],
+};
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A020F0"];
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[60vh] text-xl font-semibold">
+        Loading Dashboard...
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800"> Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <StatCard title="Total Products" value={products.length} color="bg-blue-500" />
-        <StatCard title="Total Users" value={users.length} color="bg-green-500" />
-        <StatCard title="Active Users" value={activeUsers} color="bg-indigo-500" />
-        <StatCard title="Suspended Users" value={suspendedUsers} color="bg-red-500" />
-        <StatCard title="Total Orders" value={orders.length} color="bg-purple-500" />
-        <StatCard title="Revenue" value={`₹${revenue}`} color="bg-yellow-500" />
+      
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Admin Dashboard
+        </h1>
+        <p className="text-gray-500">
+          Overview of your platform performance
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div className="bg-white p-5 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Orders Profit Over Time</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="profit" stroke="#8884d8" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        
+        {/* Users */}
+        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
+          <p className="text-gray-500 text-sm">Total Users</p>
+          <h2 className="text-3xl font-bold text-blue-600 mt-2">
+            {stats.users}
+          </h2>
         </div>
-        <div className="bg-white p-5 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Orders by Category</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={120}
-                label
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+
+        
+        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
+          <p className="text-gray-500 text-sm">Total Products</p>
+          <h2 className="text-3xl font-bold text-green-600 mt-2">
+            {stats.products}
+          </h2>
+        </div>
+
+        {/* Orders */}
+        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
+          <p className="text-gray-500 text-sm">Total Orders</p>
+          <h2 className="text-3xl font-bold text-purple-600 mt-2">
+            {stats.orders}
+          </h2>
+        </div>
+
+      </div>
+
+      
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Analytics Overview
+        </h2>
+
+        <div className="h-[350px]">
+          <Bar
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: false,
+                },
+              },
+            }}
+          />
         </div>
       </div>
+
     </div>
   );
-}
-function StatCard({ title, value, color }) {
-  return (
-    <div className={`p-6 rounded-xl shadow-md text-white ${color}`}>
-      <h3 className="text-lg">{title}</h3>
-      <p className="text-2xl font-bold">{value}</p>
-    </div>
-  );
-}
+};
+
+export default DashBoard;

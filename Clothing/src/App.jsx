@@ -18,6 +18,8 @@ import ProtectedRouteUser from "./Auth/ProtectedRouteUser.jsx";
 import ProtectedRouteAdmin from "./Auth/ProtectedRouteAdmin.jsx";
 import PublicRoute from "./Auth/PublicRoute.jsx";
 import Unauthorized from "./Auth/Unauthorized.jsx";
+import ForgotPassword from "./Auth/ForgotPassword.jsx";
+import ResetPassword from "./Auth/ResetPassword.jsx";
 
 import AllProducts from "./Components/AllProducts.jsx";
 import Carts from "./Components/Carts.jsx";
@@ -31,6 +33,7 @@ import DashBoard from "./Admin/DashBoard.jsx";
 import Users from "./Admin/Users.jsx";
 import Orders from "./Admin/Orders.jsx";
 import Products from "./Admin/Products.jsx";
+
 
 function App() {
   return (
@@ -47,11 +50,14 @@ function App() {
               <Route path="/login" element={ <PublicRoute><FormikValidationForm /> </PublicRoute>} />
               <Route path="/Signin"   element={<PublicRoute>  <SignUpPage /></PublicRoute>} />
               <Route path="/product/:id" element={<DetailsPage />} />
-               <Route  path="/carts"element={<ProtectedRouteUser> <Carts /> </ProtectedRouteUser>}/>
+              <Route  path="/carts"element={<ProtectedRouteUser> <Carts /> </ProtectedRouteUser>}/>
               <Route path="/wishlist"  element={<ProtectedRouteUser> <WishList /></ProtectedRouteUser> }/>
               <Route path="/paymentpage" element={<ProtectedRouteUser>  <PaymentPage /></ProtectedRouteUser>}/>
               <Route path="/OrderPage"element={<ProtectedRouteUser> <OrderPage /> </ProtectedRouteUser> }/>
-              
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:uid/:token" element={<ResetPassword />}/>
+
 
               <Route path="/admin"   element={ <ProtectedRouteAdmin> <Admin /></ProtectedRouteAdmin>}>
                 <Route index element={<DashBoard />} />
@@ -68,5 +74,8 @@ function App() {
     </AuthProvider>
   );
 }
-
 export default App;
+
+
+
+

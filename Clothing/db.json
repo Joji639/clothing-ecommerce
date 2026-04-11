@@ -69,7 +69,7 @@
       "BestSeller": "true"
     },
     {
-      "img": "https://image.hm.com/assets/hm/4e/2d/4e2d5f6ba4267c0c1d153e1e8ab1c87aa79bd363.jpg?imwidth=1536",
+      "img": "`https://image.hm.com/assets/hm/4e/2d/4e2d5f6ba4267c0c1d153e1e8ab1c87aa79bd363.jpg?imwidth=1536`",
       "title": "Flared skirt",
       "category": "women",
       "id": "8",
@@ -1061,6 +1061,23 @@
       "password": "123456",
       "role": "user",
       "status": "user"
+    },
+    {
+      "id": "12b8",
+      "name": "joji",
+      "email": "j@gmail.com",
+      "password": "1234joji",
+      "role": "user",
+      "status": "user"
+    },
+    {
+      "id": "da90",
+      "name": "dominic",
+      "email": "dominic@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "status": "user"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

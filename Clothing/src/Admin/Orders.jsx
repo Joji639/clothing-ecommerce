@@ -1,153 +1,102 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-const API = "http://localhost:5000/user";
+import api from "../api/axios";
 
 export default function OrdersAdminPage() {
-  const [users, setUsers] = useState([]);
-  const [expanded, setExpanded] = useState({});
+  const [orders, setOrders] = useState([]);
+
+  const fetchOrders = async () => {
+    try {
+      const res = await api.get("/admin-api/orders/");
+      setOrders(res.data);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    }
+  };
 
   useEffect(() => {
-    fetchUsers();
+    fetchOrders();
   }, []);
-  const fetchUsers = async () => {
+
+  const updateStatus = async (id, status) => {
     try {
-      const res = await axios.get(API);
-      setUsers(res.data);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-    }
-  };
-
-  const toggleExpand = (userId, orderIdx) => {
-    const key = `${userId}-${orderIdx}`;
-    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const updateStatus = async (userId, orderIdx, newStatus) => {
-    const user = users.find((u) => u.id === userId);
-    if (!user) return;
-
-    const currentOrder = user.orders[orderIdx];
-
-    const statusOrder = ["Pending", "Shipping", "Delivered"];
-    const currentIndex = statusOrder.indexOf(currentOrder.status);
-    const newIndex = statusOrder.indexOf(newStatus);
-
-    if (newIndex <= currentIndex) {
-      alert("⚠️ Cannot move order back to previous status!");
-      return;
-    }
-
-    const updatedOrders = [...user.orders];
-    updatedOrders[orderIdx] = { ...currentOrder, status: newStatus };
-
-    const updatedUser = { ...user, orders: updatedOrders };
-
-    try {
-      await axios.put(`${API}/${userId}`, updatedUser);
-      setUsers((prev) => prev.map((u) => (u.id === userId ? updatedUser : u)));
+      await api.patch(`/admin-api/orders/${id}/status/`, { status });
+      fetchOrders();
     } catch (err) {
       console.error("Error updating status:", err);
     }
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800"> Orders Admin</h1>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">Orders Management</h1>
 
-      <div className="overflow-x-auto bg-white shadow-md rounded-xl">
-        <table className="min-w-full text-sm text-gray-700">
-          <thead className="bg-gray-200 text-gray-700 uppercase text-xs">
-            <tr>
-              <th className="px-4 py-3 text-left">User</th>
-              <th className="px-4 py-3 text-left">Order Title</th>
-              <th className="px-4 py-3 text-left">Price</th>
-              <th className="px-4 py-3 text-left">Quantity</th>
-              <th className="px-4 py-3 text-left">Status</th>
-              <th className="px-4 py-3 text-left">Details</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {users.map((user) =>
-              user.orders?.map((order, idx) => {
-                const key = `${user.id}-${idx}`;
-                return (
-                  <React.Fragment key={key}>
-                    <tr className="hover:bg-gray-50 transition">
-                      <td className="px-4 py-3 font-medium">{user.name}</td>
-                      <td className="px-4 py-3">{order.title}</td>
-                      <td className="px-4 py-3">₹{order.price}</td>
-                      <td className="px-4 py-3">{order.quantity}</td>
-                      <td className="px-4 py-3">
-                        <select
-                          value={order.status}
-                          onChange={(e) =>
-                            updateStatus(user.id, idx, e.target.value)
-                          }
-                          className={`border px-2 py-1 rounded focus:outline-none ${
-                            order.status === "Pending"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : order.status === "Shipping"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-green-100 text-green-700"
-                          }`}
-                          disabled={order.status === "Delivered"}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Shipping">Shipping</option>
-                          <option value="Delivered">Delivered</option>
-                        </select>
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => toggleExpand(user.id, idx)}
-                          className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-medium"
-                        >
-                          {expanded[key] ? "Hide" : "View"}
-                        </button>
-                      </td>
-                    </tr>
+      {orders.length === 0 ? (
+        <p>No orders found</p>
+      ) : (
+        orders.map((order) => (
+          <div
+            key={order.id}
+            className="bg-white shadow-lg rounded-xl p-5 mb-6 border"
+          >
+            {/* 🔹 Order Header */}
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-lg font-semibold">
+                  Order #{order.id}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Status:{" "}
+                  <span className="font-medium">{order.status}</span>
+                </p>
+              </div>
 
-                    {expanded[key] && (
-                      <tr>
-                        <td colSpan={6} className="px-4 py-3 bg-gray-50">
-                          <div className="flex gap-6">
-                            <img
-                              src={order.img}
-                              alt={order.title}
-                              className="w-24 h-24 object-cover rounded-md border"
-                            />
-                            <div>
-                              <p className="font-semibold">{order.title}</p>
-                              <p className="text-gray-600 text-sm">
-                                Category: {order.category}
-                              </p>
-                              <p className="text-gray-600 text-sm">
-                                Date: {order.date} | Time: {order.time}
-                              </p>
-                              <p className="text-gray-600 text-sm">
-                                Buyer: {order.buyer?.fullName} (
-                                {order.buyer?.email})
-                              </p>
-                              <p className="text-gray-600 text-sm">
-                                Address: {order.buyer?.address}
-                              </p>
-                              <p className="text-gray-600 text-sm">
-                                Payment: {order.buyer?.payment}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+              
+              <select
+                value={order.status}
+                onChange={(e) =>
+                  updateStatus(order.id, e.target.value)
+                }
+                className="border px-3 py-1 rounded"
+              >
+                <option value="pending">pending</option>
+                <option value="confirmed">confirmed</option>
+                <option value="shipped">shipped</option>
+                <option value="delivered">delivered</option>
+              </select>
+            </div>
+
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {order.items.map((item) => (
+                <div
+                  key={item.product}
+                  className="border rounded-lg p-3 flex gap-3 items-center hover:shadow-md transition"
+                >
+                  
+                  <img
+                    src={item.img}
+                    alt={item.product_name}
+                    className="w-16 h-16 object-cover rounded"
+                  />
+
+                  
+                  <div>
+                    <p className="font-semibold">
+                      {item.product_name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      ₹{item.price}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      )}
     </div>
   );
 }

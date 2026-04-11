@@ -3,76 +3,95 @@ import { useCart } from "../Context/CartContext";
 import useAuth from "../Context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
+import api from "../api/axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import Nav from "../Main/Nav";
 
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { CartItem, SetCartItem, EmptyCart } = useCart();
+
+  const { CartItem,SetCartItem, fetchCart } = useCart(); // ✅ FIXED naming
   const { user } = useAuth();
 
   const singleProduct = location.state?.product;
   const orderItems = singleProduct ? [singleProduct] : CartItem || [];
 
-  const subtotal = orderItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+  
+  const subtotal = orderItems.reduce(
+    (acc, item) => acc + (item.price || 0) * (item.quantity || 1),
+    0
+  );
+
   const shipping = subtotal > 1000 ? 0 : subtotal > 0 ? 50 : 0;
   const total = subtotal + shipping;
 
-  const validationSchema = Yup.object({
-    fullName: Yup.string().trim().min(3, "Full Name must be at least 3 characters").max(50, "Full Name must be less than 50 characters").required("Full Name is required"),
-    email: Yup.string().email("Invalid email format").required("Email is required"),
-    phone: Yup.string().matches(/^[0-9]{10}$/, "Phone number must be exactly 10 digits").required("Phone number is required"),
-    address: Yup.string().required("Address is required"),
-    payment: Yup.string().oneOf(["upi", "card", "cod"], "Please select a valid payment method").required("Please select a payment method"),
-  });
 
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    if (!user?.id) {
-      toast.error("Please login before placing an order");
-      setSubmitting(false);
-      return navigate("/login");
+  const handleSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
+    if (!user) {
+      toast.error("Please login first");
+      navigate("/login");
+      return;
     }
 
     try {
-      const { data: latestUser } = await axios.get(`http://localhost:5000/user/${user.id}`);
-      const now = new Date();
-
-      const newOrderItems = orderItems.map((item) => ({
-        ...item,
-        title: item.title || item.name || "", 
-        date: now.toLocaleDateString(),
-        time: now.toLocaleTimeString(),
-        status: "pending",
-        buyer: values,
-      }));
-
-      const updatedOrders = [...(latestUser.orders || []), ...newOrderItems];
+      let payload;
 
       if (!singleProduct) {
-        await axios.patch(`http://localhost:5000/user/${user.id}`, {
-          userDetails: values,
-          orders: updatedOrders,
-          cart: [],
-        });
-
-        SetCartItem([]);
+        payload = {
+          type: "cart",
+          full_name: values.fullName,
+          email: values.email,
+          phone: values.phone,
+          address: values.address,
+          payment_method: values.payment,
+        };
       } else {
-        await axios.patch(`http://localhost:5000/user/${user.id}`, {
-          userDetails: values,
-          orders: updatedOrders,
-        });
+        payload = {
+          type: "single",
+          product: singleProduct.product || singleProduct.id,
+          quantity: singleProduct.quantity || 1,
+          full_name: values.fullName,
+          email: values.email,
+          phone: values.phone,
+          address: values.address,
+          payment_method: values.payment,
+        };
       }
 
-      toast.success("Order placed successfully!");
-      resetForm();
+      const res = await api.post("payment/", payload);
 
+      toast.success(res.data?.message || "Order placed successfully!");
+
+      
+      if (!singleProduct) {
+        SetCartItem([]);      // instant UI
+        await fetchCart();    // backend sync
+      }
+
+      resetForm();
       navigate("/OrderPage");
+
     } catch (error) {
-      console.error("Failed to place order:", error);
-      toast.error("Failed to place order");
+      const err = error.response?.data;
+
+      if (err && typeof err === "object") {
+        setErrors({
+          fullName: err.full_name,
+          email: err.email,
+          phone: err.phone,
+          address: err.address,
+          payment: err.payment_method,
+        });
+
+        Object.values(err).forEach((msg) => {
+          toast.error(Array.isArray(msg) ? msg[0] : msg);
+        });
+
+      } else {
+        toast.error("Server error");
+      }
+
     } finally {
       setSubmitting(false);
     }
@@ -81,28 +100,34 @@ const PaymentPage = () => {
   return (
     <>
       <Nav />
+
       <div className="max-w-5xl mx-auto p-6 grid md:grid-cols-3 gap-8">
+
+        
         <div className="md:col-span-2 bg-white rounded-2xl shadow p-6">
           <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
 
           {orderItems.length > 0 ? (
-            <div className="space-y-4">
-              {orderItems.map((item) => (
-                <div key={item.id} className="flex items-center gap-4 border-b pb-4 last:border-none">
-                  <img src={item.img} alt={item.name || item.title} className="w-24 h-24 object-cover rounded-lg" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{item.name || item.title}</h3>
-                    <p className="text-sm text-gray-500">Qty: {item.quantity || 1}</p>
-                    <p className="font-bold">₹{item.price}</p>
-                  </div>
+            orderItems.map((item, index) => (
+              <div key={item.id || index} className="flex gap-4 border-b pb-4">
+                <img
+                  src={item.img || ""}
+                  alt={item.title || "product"}
+                  className="w-24 h-24 object-cover rounded"
+                />
+                <div>
+                  <h3 className="font-semibold">{item.title || "No Title"}</h3>
+                  <p>Qty: {item.quantity || 1}</p>
+                  <p>₹{item.price || 0}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))
           ) : (
-            <p className="text-gray-500">No items to checkout.</p>
+            <p>No items in cart</p>
           )}
         </div>
 
+        
         <Formik
           initialValues={{
             fullName: "",
@@ -111,64 +136,68 @@ const PaymentPage = () => {
             address: "",
             payment: "",
           }}
-          validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
-            <Form className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Buyer Details</h2>
+            <Form className="bg-white p-6 rounded-2xl shadow space-y-3">
 
-                <Field type="text" name="fullName" placeholder="Full Name" className="w-full mb-2 px-4 py-2 border rounded-lg" />
-                <ErrorMessage name="fullName" component="p" className="text-red-500 text-sm mb-2" />
+              <Field
+                name="fullName"
+                placeholder="Full Name"
+                className="w-full p-2 border rounded"
+              />
+              <ErrorMessage name="fullName" component="p" className="text-red-500 text-sm" />
 
-                <Field type="email" name="email" placeholder="Email" className="w-full mb-2 px-4 py-2 border rounded-lg" />
-                <ErrorMessage name="email" component="p" className="text-red-500 text-sm mb-2" />
+              <Field
+                name="email"
+                placeholder="Email"
+                className="w-full p-2 border rounded"
+              />
+              <ErrorMessage name="email" component="p" className="text-red-500 text-sm" />
 
-                <Field type="tel" name="phone" placeholder="Phone Number" className="w-full mb-2 px-4 py-2 border rounded-lg" />
-                <ErrorMessage name="phone" component="p" className="text-red-500 text-sm mb-2" />
+              <Field
+                name="phone"
+                placeholder="Phone"
+                className="w-full p-2 border rounded"
+              />
+              <ErrorMessage name="phone" component="p" className="text-red-500 text-sm" />
 
-                <Field as="textarea" name="address" placeholder="Address" className="w-full mb-2 px-4 py-2 border rounded-lg" />
-                <ErrorMessage name="address" component="p" className="text-red-500 text-sm mb-2" />
+              <Field
+                name="address"
+                placeholder="Address"
+                className="w-full p-2 border rounded"
+              />
+              <ErrorMessage name="address" component="p" className="text-red-500 text-sm" />
 
-                <h2 className="text-xl font-bold mb-3">Payment Method</h2>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2">
-                    <Field type="radio" name="payment" value="upi" />
-                    <span>UPI</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <Field type="radio" name="payment" value="card" />
-                    <span>Credit / Debit Card</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <Field type="radio" name="payment" value="cod" />
-                    <span>Cash on Delivery</span>
-                  </label>
-                </div>
-                <ErrorMessage name="payment" component="p" className="text-red-500 text-sm mt-2" />
+              
+              <div className="space-x-3">
+                <label>
+                  <Field type="radio" name="payment" value="upi" /> UPI
+                </label>
+                <label>
+                  <Field type="radio" name="payment" value="card" /> Card
+                </label>
+                <label>
+                  <Field type="radio" name="payment" value="cod" /> COD
+                </label>
               </div>
 
-              <div className="mt-6 border-t pt-4">
-                <p className="flex justify-between mb-2">
-                  <span>Subtotal</span>
-                  <span>₹{subtotal}</span>
-                </p>
-                <p className="flex justify-between mb-2">
-                  <span>Shipping</span>
-                  <span>₹{shipping}</span>
-                </p>
-                <p className="flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span>₹{total}</span>
-                </p>
-                <button type="submit" disabled={isSubmitting || orderItems.length === 0} className="mt-4 w-full bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition">
-                  {isSubmitting ? "Placing Order..." : "Confirm & Pay"}
-                </button>
-              </div>
+              <ErrorMessage name="payment" component="p" className="text-red-500 text-sm" />
+
+              <p className="font-bold">Total: ₹{total}</p>
+
+              <button
+                type="submit"
+                disabled={isSubmitting || orderItems.length === 0}
+                className="bg-green-600 text-white w-full py-2 rounded"
+              >
+                {isSubmitting ? "Placing Order..." : "Confirm & Pay"}
+              </button>
+
             </Form>
           )}
         </Formik>
+
       </div>
     </>
   );

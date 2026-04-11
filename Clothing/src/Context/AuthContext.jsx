@@ -1,50 +1,74 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import { login as loginService, logout as logoutService } from "../services/authservices/"
 import toast from "react-hot-toast";
+
 export const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [user, setUser] = useState(null);
-  const [loading, SetLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+
+  const login = async (email, password) => {
+    try {
+      const data = await loginService(email, password);
+
+      setUser({
+        email: data.email,
+        name: data.name,
+        role: data.role, 
+      });
+
+    } catch (err) {
+      toast.error(err?.non_field_errors?.[0] || "Login failed");
+      throw err;
+    }
+  };
+
+
+  const logout = async () => {
+    await logoutService();
+    setUser(null);
+    toast.success("Logged out");
+  };
+
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    try {
+      const token = localStorage.getItem("access");
 
-    if (storedUser && storedUser !== "undefined") {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        setIsLoggedIn(true);
-      } catch (err) {
-        console.error(err);
+      if (!token) {
+        setLoading(false);
+        return;
       }
+
+      const email = localStorage.getItem("email");
+      const name = localStorage.getItem("name");
+      const role = localStorage.getItem("role");
+
+      if (email && name  && role) {
+        setUser({
+          email,
+          name,
+          role, 
+        });
+      }
+
+    } catch (error) {
+      localStorage.clear();
+    } finally {
+      setLoading(false);
     }
-    SetLoading(false);
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    setIsLoggedIn(true);
-    localStorage.setItem("user", JSON.stringify(userData));
-    toast.success("logged in");
-  };
-
-  const logout = () => {
-    setUser(null);
-    setIsLoggedIn(false);
-    toast.error("logged out");
-    localStorage.removeItem("user");
-  };
-
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-const useAuth = () => {
+export default function useAuth() {
   return useContext(AuthContext);
-};
-export default useAuth;
-
-
+}

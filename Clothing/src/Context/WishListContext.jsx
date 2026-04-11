@@ -1,65 +1,69 @@
+// Context/WishListContext.jsx
+
 import { createContext, useState, useEffect, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "./AuthContext";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 export const WishlistContext = createContext();
 
 export const WishListProvider = ({ children }) => {
   const [WishList, setWishList] = useState([]);
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
+
+
+  const fetchWishlist = async () => {
+    try {
+      const res = await api.get("allwishlist/wishlist/");
+      setWishList(res.data);
+    } catch (err) {
+      console.log("Wishlist fetch error", err);
+    }
+  };
 
   useEffect(() => {
-    if (user?.id) {
-      axios
-        .get(`http://localhost:5000/user/${user.id}`)
-        .then((res) => {
-          setWishList(res.data.wishlist || []);
-        })
-        .catch((err) => console.error("Error fetching wishlist:", err));
+    if (user) {
+      fetchWishlist();
     } else {
       setWishList([]);
     }
   }, [user]);
 
-  const updateWishList = async (updatedList) => {
-    if (!user?.id) return;
+
+  const addToWishlist = async (productId) => {
     try {
-      await axios.patch(`http://localhost:5000/user/${user.id}`, {
-        wishlist: updatedList,
+      await api.post("allwishlist/wishlist/", {
+        product: productId,
       });
-    } catch (err) {
-      console.error("Error updating wishlist:", err);
-    }
-  };
-
-  const toggleWishList = (product) => {
-    if (!user) {
-      toast.error("Please sign in to use this feature");
-      return navigate("/signin");
-    }
-
-    let updatedList;
-    const exists = WishList.find((item) => item.id === product.id);
-    if (exists) {
-      updatedList = WishList.filter((item) => item.id !== product.id);
-      toast.error("Removed from Wishlist");
-    } else {
-      updatedList = [...WishList, product];
       toast.success("Added to Wishlist");
+      fetchWishlist(); 
+    } catch (err) {
+      toast.error("Already in wishlist");
     }
-
-    setWishList(updatedList);
-    updateWishList(updatedList);
   };
 
-  const removeFromWishlist = (id) => {
-    const updatedWishlist = WishList.filter((item) => item.id !== id);
-    setWishList(updatedWishlist);
-    updateWishList(updatedWishlist);
-    toast.error("Removed from wishlist");
+
+  const removeFromWishlist = async (productId) => {
+    try {
+      await api.delete(`allwishlist/wishlist/${productId}/`);
+      toast.error("Removed from Wishlist");
+      fetchWishlist();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  
+  const toggleWishList = (product) => {
+    const exists = WishList.some(
+      (item) => item.product === product.id
+    );
+
+    if (exists) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product.id);
+    }
   };
 
   return (

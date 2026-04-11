@@ -1,128 +1,87 @@
 
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../Context/AuthContext";
 
-const validationSchema = Yup.object({
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
 const FormikValidationForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleLogin = async (values, resetForm) => {
+  const handleSubmit = async (values, { setErrors }) => {
     try {
-      const res = await axios.get("http://localhost:5000/user", {
-        params: {
-          email: values.email,
-          password: values.password,
-        },
-      });
+      await login(values.email, values.password);
 
-      if (res.data.length > 0 && res.data[0].status !== "suspend") {
-        const userData = res.data[0];
+      toast.success(`Welcome ${values.email}`);
+      navigate("/");
 
-        const finalUser = {
-          id: userData.id,
-          name: userData.name,
-          email: userData.email,
-          role: userData.role || "user",
-          
-        };
+    } catch (error) {
+      const err = error.response?.data;
 
-        login(finalUser);
+      if (err) {
+        setErrors({
+          email: err.email?.[0],
+          password: err.password?.[0],
+        });
 
-        toast.success("Login successful!");
-        console.log("User logged in:", finalUser);
-
-        if (finalUser.role === "admin") {
-          navigate("/admin");
+        if (err.non_field_errors) {
+          toast.error(err.non_field_errors[0]);
+        } else if (err.detail) {
+          toast.error(err.detail);
         } else {
-          navigate("/");
+          toast.error("Invalid credentials");
         }
-      } 
-      else if (res.data.length > 0 && res.data[0].status === "suspend") {
-        toast.error("Your account is suspended ❌");
-        navigate("/");
-      } 
-      else {
-        toast.error("User not found. Please sign up.");
-        navigate("/Signin");
+      } else {
+        toast.error("Login failed");
       }
-
-      resetForm();
-    } catch (err) {
-      console.error("Login error:", err);
-      toast.error("Something went wrong!");
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-2xl p-6">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
 
         <Formik
           initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
-          onSubmit={(values, { resetForm }) => handleLogin(values, resetForm)}
+          onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
             <Form className="space-y-4">
+
               <div>
-                <label className="block font-medium">Email</label>
-                <Field
-                  type="email"
-                  name="email"
-                  className="w-full p-2 border rounded-2xl"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
+                <label>Email</label>
+                <Field name="email" type="email" className="w-full p-2 border rounded" />
+                <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
               </div>
 
               <div>
-                <label className="block font-medium">Password</label>
-                <Field
-                  type="password"
-                  name="password"
-                  className="w-full p-2 border rounded-2xl"
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
+                <label>Password</label>
+                <Field name="password" type="password" className="w-full p-2 border rounded" />
+                <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-blue-600 text-white py-2 w-full hover:bg-blue-700 rounded-2xl"
+                className="bg-blue-600 text-white py-2 w-full rounded"
               >
-                {isSubmitting ? "Logging in..." : "Submit"}
+                {isSubmitting ? "Logging in..." : "Login"}
               </button>
+
             </Form>
           )}
         </Formik>
 
-        <h2 className="mt-4 text-center text-sm">
-          Don’t have an account?
-          <Link to="/Signin">
-            <span className="text-red-500 font-semibold"> Create one</span>
-          </Link>
-        </h2>
+        <p className="mt-4 text-center text-sm">
+          <span
+            onClick={() => navigate("/forgot-password")}
+            className="text-blue-500 cursor-pointer"
+          >
+            Forgot Password?
+          </span>
+        </p>
       </div>
     </div>
   );

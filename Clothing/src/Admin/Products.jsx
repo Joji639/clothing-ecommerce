@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -16,47 +16,36 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/Products");
-      setProducts(res.data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
+const fetchProducts = async () => {
+  const res = await api.get("/admin-api/products/");
+  setProducts(res.data);
+};
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/Products/${id}`);
-      fetchProducts();
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
-  };
+const handleDelete = async (id) => {
+  await api.delete(`/admin-api/products/${id}/`);
+  fetchProducts();
+};
 
-  const handleAddOrUpdate = async () => {
-    if (!newProduct.title || !newProduct.img || !newProduct.price || !newProduct.category) {
-      alert("Please fill all fields");
-      return;
+const handleAddOrUpdate = async () => {
+  if (!newProduct.title || !newProduct.img || !newProduct.price || !newProduct.category) {
+    alert("Fill all fields");
+    return;
+  }
+
+  try {
+    if (editingId) {
+      await api.put(`/admin-api/products/${editingId}/`, newProduct);
+    } else {
+      await api.post("/admin-api/products/", newProduct);
     }
 
-    try {
-      if (editingId) {
-        await axios.put(`http://localhost:5000/Products/${editingId}`, {
-          ...newProduct,
-          id: editingId,
-        });
-        setEditingId(null);
-      } else {
-        await axios.post("http://localhost:5000/Products", newProduct);
-      }
-
-      setNewProduct({ id: null, title: "", img: "", category: "", price: "" });
-      fetchProducts();
-    } catch (error) {
-      console.error("Error saving product:", error);
-    }
-  };
+    setNewProduct({ title: "", img: "", category: "", price: "" });
+    setEditingId(null);
+    fetchProducts();
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   const handleEditClick = (product) => {
     setEditingId(product.id);
