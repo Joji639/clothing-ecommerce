@@ -1,105 +1,175 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { GiClothesline } from "react-icons/gi";
-import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
+import {
+  FaHeart,
+  FaShoppingCart,
+  FaUser,
+  FaBars,
+  FaTimes,
+  FaSearch,
+} from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { CartContext } from "../Context/CartContext";
 import useAuth from "../Context/AuthContext";
-import { IoLogOut } from "react-icons/io5";
+import { IoLogOut, IoBag } from "react-icons/io5";
 import { WishlistContext } from "../Context/WishListContext";
-import { IoBag } from "react-icons/io5";
 import Search from "./Search";
 import { CategoryContext } from "../Context/CategoryContext";
 
 const Nav = () => {
   const { SetCategory } = useContext(CategoryContext);
   const { CartItem } = useContext(CartContext);
-  const { user, logout, loading } = useAuth(); 
+  const { user, logout, loading } = useAuth();
   const { WishList } = useContext(WishlistContext);
 
-  const totalItems = CartItem.reduce((sum, item) => sum + item.quantity, 0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const totalItems = CartItem.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
 
   return (
-    <nav className="sticky top-0 bg-white shadow-md py-4 px-6 flex items-center justify-between max-w-7xl mx-auto gap-4 z-50">
-      
-      <Link to="/">
-        <div className="flex items-center space-x-2">
-          <GiClothesline className="text-3xl text-amber-600" />
-          <span className="text-xl md:text-2xl font-bold text-gray-800">
-            Clothify
-          </span>
-        </div>
-      </Link>
+    <nav className="sticky top-0 bg-white border-b shadow-sm z-50">
 
-      <ul className="hidden md:flex space-x-8 text-gray-700 font-medium">
-        <Link to="/allProducts">
-          <li onClick={() => SetCategory(null)} className="hover:text-amber-600 cursor-pointer">
-            All products
-          </li>
-        </Link>
-        <Link to="/allProducts">
-          <li onClick={() => SetCategory("men")} className="hover:text-amber-600 cursor-pointer">
-            Men
-          </li>
-        </Link>
-        <Link to="/allProducts">
-          <li onClick={() => SetCategory("women")} className="hover:text-amber-600 cursor-pointer">
-            Women
-          </li>
-        </Link>
-        <Link to="/allProducts">
-          <li onClick={() => SetCategory("kids")} className="hover:text-amber-600 cursor-pointer">
-            Kids
-          </li>
-        </Link>
-        <Link to="/allProducts">
-          <li onClick={() => SetCategory("unisex")} className="hover:text-amber-600 cursor-pointer">
-            Unisex
-          </li>
-        </Link>
-      </ul>
+      {/* 🔹 MAIN NAV */}
+      <div className="max-w-6xl mx-auto px-2 py-3 flex items-center justify-between">
 
-      <div className="hidden md:block flex-grow mx-8">
-        <Search display="hidden" />
-      </div>
-
-      <div className="flex items-center space-x-6 text-gray-600 relative">
-
-        <Link to="/OrderPage">
-          <IoBag className="text-2xl hover:text-amber-600 cursor-pointer" />
-        </Link>
-
-        <Link to="/Wishlist" className="relative">
-          <FaHeart className="text-xl hover:text-amber-600 cursor-pointer" />
-          {WishList.length > 0 && (
-            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-              {WishList.length}
-            </span>
-          )}
-        </Link>
-
-        <Link to="/carts" className="relative">
-          <FaShoppingCart className="text-xl hover:text-amber-600 cursor-pointer" />
-          {totalItems > 0 && (
-            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-              {totalItems}
-            </span>
-          )}
-        </Link>
-
-        
-        {loading ? (
-          <span className="text-sm">...</span>
-        ) : user ? (
-          <button onClick={logout}>
-            <IoLogOut className="text-2xl hover:text-red-600 cursor-pointer" />
+        {/* ================= LEFT ================= */}
+        <div className="flex items-center gap-4 min-w-[180px]">
+          
+          {/* 🍔 Hamburger */}
+          <button
+            className="md:hidden text-lg"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <FaTimes /> : <FaBars />}
           </button>
-        ) : (
-          <Link to="/signin">
-            <FaUser className="text-xl hover:text-amber-600 cursor-pointer" />
-          </Link>
-        )}
 
+          {/* LOGO */}
+          <Link to="/" className="flex items-center gap-2">
+            <GiClothesline className="text-3xl text-amber-600" />
+            <span className="text-2xl font-bold text-gray-800">
+              Clothify
+            </span>
+          </Link>
+
+          {/* MENU (DESKTOP) */}
+          <ul className="hidden md:flex gap-4 text-gray-700 font-medium text-base">
+            <Link to="/allProducts">
+              <li onClick={() => SetCategory(null)} className="hover:text-amber-600 cursor-pointer">
+                All
+              </li>
+            </Link>
+            <Link to="/allProducts">
+              <li onClick={() => SetCategory("men")} className="hover:text-amber-600 cursor-pointer">
+                Men
+              </li>
+            </Link>
+            <Link to="/allProducts">
+              <li onClick={() => SetCategory("women")} className="hover:text-amber-600 cursor-pointer">
+                Women
+              </li>
+            </Link>
+            <Link to="/allProducts">
+              <li onClick={() => SetCategory("kids")} className="hover:text-amber-600 cursor-pointer">
+                Kids
+              </li>
+            </Link>
+            <Link to="/allProducts">
+              <li onClick={() => SetCategory("unisex")} className="hover:text-amber-600 cursor-pointer">
+                Unisex
+              </li>
+            </Link>
+          </ul>
+        </div>
+
+        {/* ================= CENTER ================= */}
+        <div className="hidden md:flex flex-1 justify-center px-4">
+          <div className="w-full max-w-md">
+            <Search />
+          </div>
+        </div>
+
+        {/* ================= RIGHT ================= */}
+        <div className="flex items-center gap-4 min-w-[180px] justify-end text-gray-700">
+
+          {/* 🔍 Mobile Search */}
+          <button
+            className="md:hidden text-xl"
+            onClick={() => setSearchOpen(!searchOpen)}
+          >
+            <FaSearch />
+          </button>
+
+          {/* Orders */}
+          <Link to="/OrderPage">
+            <IoBag className="text-2xl" />
+          </Link>
+
+          {/* Wishlist */}
+          <Link to="/Wishlist" className="relative">
+            <FaHeart className="text-2xl" />
+            {WishList.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
+                {WishList.length}
+              </span>
+            )}
+          </Link>
+
+          {/* Cart */}
+          <Link to="/carts" className="relative">
+            <FaShoppingCart className="text-2xl" />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
+                {totalItems}
+              </span>
+            )}
+          </Link>
+
+          {/* Auth */}
+          {loading ? (
+            <span>...</span>
+          ) : user ? (
+            <button onClick={logout}>
+              <IoLogOut className="text-2xl hover:text-red-500" />
+            </button>
+          ) : (
+            <Link to="/signin">
+              <FaUser className="text-2xl hover:text-amber-600" />
+            </Link>
+          )}
+        </div>
       </div>
+
+      {/* 🔽 MOBILE SEARCH */}
+      {searchOpen && (
+        <div className="md:hidden px-3 pb-3">
+          <Search />
+        </div>
+      )}
+
+      {/* 🔽 MOBILE MENU */}
+      {menuOpen && (
+        <div className="md:hidden bg-white border-t px-5 py-4 flex flex-col gap-3">
+          <Link to="/allProducts" onClick={() => SetCategory(null)}>
+            All
+          </Link>
+          <Link to="/allProducts" onClick={() => SetCategory("men")}>
+            Men
+          </Link>
+          <Link to="/allProducts" onClick={() => SetCategory("women")}>
+            Women
+          </Link>
+          <Link to="/allProducts" onClick={() => SetCategory("kids")}>
+            Kids
+          </Link>
+          <Link to="/allProducts" onClick={() => SetCategory("unisex")}>
+            Unisex
+          </Link>
+        </div>
+      )}
     </nav>
   );
 };
