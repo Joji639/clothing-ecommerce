@@ -58,7 +58,7 @@ export default function OrdersAdminPage() {
                 }
                 className="border px-3 py-1 rounded"
               >
-                <option value="pending">pending</option>
+              
                 <option value="confirmed">confirmed</option>
                 <option value="shipped">shipped</option>
                 <option value="delivered">delivered</option>
