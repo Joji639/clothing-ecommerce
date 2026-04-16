@@ -33,13 +33,13 @@ const Nav = () => {
   return (
     <nav className="sticky top-0 bg-white border-b shadow-sm z-50">
 
-      {/* 🔹 MAIN NAV */}
+      
       <div className="max-w-6xl mx-auto px-2 py-3 flex items-center justify-between">
 
         {/* ================= LEFT ================= */}
         <div className="flex items-center gap-4 min-w-[180px]">
           
-          {/* 🍔 Hamburger */}
+          
           <button
             className="md:hidden text-lg"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -47,7 +47,7 @@ const Nav = () => {
             {menuOpen ? <FaTimes /> : <FaBars />}
           </button>
 
-          {/* LOGO */}
+         
           <Link to="/" className="flex items-center gap-2">
             <GiClothesline className="text-3xl text-amber-600" />
             <span className="text-2xl font-bold text-gray-800">
@@ -55,7 +55,7 @@ const Nav = () => {
             </span>
           </Link>
 
-          {/* MENU (DESKTOP) */}
+          
           <ul className="hidden md:flex gap-4 text-gray-700 font-medium text-base">
             <Link to="/allProducts">
               <li onClick={() => SetCategory(null)} className="hover:text-amber-600 cursor-pointer">
@@ -85,17 +85,17 @@ const Nav = () => {
           </ul>
         </div>
 
-        {/* ================= CENTER ================= */}
+        
         <div className="hidden md:flex flex-1 justify-center px-4">
           <div className="w-full max-w-md">
             <Search />
           </div>
         </div>
 
-        {/* ================= RIGHT ================= */}
+        
         <div className="flex items-center gap-4 min-w-[180px] justify-end text-gray-700">
 
-          {/* 🔍 Mobile Search */}
+          
           <button
             className="md:hidden text-xl"
             onClick={() => setSearchOpen(!searchOpen)}
@@ -103,12 +103,12 @@ const Nav = () => {
             <FaSearch />
           </button>
 
-          {/* Orders */}
+          
           <Link to="/OrderPage">
             <IoBag className="text-2xl" />
           </Link>
 
-          {/* Wishlist */}
+          
           <Link to="/Wishlist" className="relative">
             <FaHeart className="text-2xl" />
             {WishList.length > 0 && (
@@ -118,7 +118,7 @@ const Nav = () => {
             )}
           </Link>
 
-          {/* Cart */}
+          
           <Link to="/carts" className="relative">
             <FaShoppingCart className="text-2xl" />
             {totalItems > 0 && (
@@ -128,7 +128,7 @@ const Nav = () => {
             )}
           </Link>
 
-          {/* Auth */}
+          
           {loading ? (
             <span>...</span>
           ) : user ? (
@@ -143,14 +143,14 @@ const Nav = () => {
         </div>
       </div>
 
-      {/* 🔽 MOBILE SEARCH */}
+      
       {searchOpen && (
         <div className="md:hidden px-3 pb-3">
           <Search />
         </div>
       )}
 
-      {/* 🔽 MOBILE MENU */}
+      
       {menuOpen && (
         <div className="md:hidden bg-white border-t px-5 py-4 flex flex-col gap-3">
           <Link to="/allProducts" onClick={() => SetCategory(null)}>
