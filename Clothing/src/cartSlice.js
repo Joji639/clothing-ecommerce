@@ -27,8 +27,8 @@ const cartSlice = createSlice({
     reducers:{
         addToCart:(state,action)=>{state.cart.push(action.payload)},
         removeFromCart:(state,action)=>{state.cart. filter((a)=>a.id!==action.payload)},
-        incrementQuantity:(state,action)=>{state.cart.find(a=>a.id===action.payload?{...a,quantity:(Number(item.quantity)||1)+1}:item)},
-        decrementQuantity:(state,action)=>{state.cart.find((a)=>a.id===action.payload?{...a,quantity:(Number(item.quantity))-1}:item)},
+        incrementQuantity:(state,action)=>{state.cart.find(a=>a.id===action.payload?{...a,quantity:(Number(a.quantity)||1)+1}:a)},
+        decrementQuantity:(state,action)=>{state.cart.find((a)=>a.id===action.payload?{...a,quantity:(Number(a.quantity))-1}:a)},
     
     }
 })
