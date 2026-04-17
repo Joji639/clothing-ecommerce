@@ -23,7 +23,6 @@ const Nav = () => {
   const { WishList } = useContext(WishlistContext);
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
 
   const totalItems = CartItem.reduce(
     (sum, item) => sum + item.quantity,
@@ -96,12 +95,9 @@ const Nav = () => {
         <div className="flex items-center gap-4 min-w-[180px] justify-end text-gray-700">
 
           
-          <button
-            className="md:hidden text-xl"
-            onClick={() => setSearchOpen(!searchOpen)}
-          >
-            <FaSearch />
-          </button>
+          <div className="md:hidden flex items-center pt-1">
+            <Search />
+          </div>
 
           
           <Link to="/OrderPage">
@@ -143,12 +139,7 @@ const Nav = () => {
         </div>
       </div>
 
-      
-      {searchOpen && (
-        <div className="md:hidden px-3 pb-3">
-          <Search />
-        </div>
-      )}
+
 
       
       {menuOpen && (

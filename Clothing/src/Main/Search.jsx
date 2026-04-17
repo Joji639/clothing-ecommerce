@@ -25,7 +25,7 @@ const Search = () => {
   // 🔹 Close mobile search when resizing
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
+      if (window.innerWidth >= 768) {
         setOpen(false);
       }
     };
@@ -42,10 +42,10 @@ const Search = () => {
     .slice(0, 5);
 
   return (
-    <div className="relative">
+    <div className="relative w-full flex justify-end md:justify-center">
       
-      {/* ================= DESKTOP SEARCH ================= */}
-      <div className="hidden lg:block">
+      {/* ================= DESKTOP SEARCH (lg and up) ================= */}
+      <div className="hidden lg:block w-full">
         <input
           type="text"
           placeholder="Search products..."
@@ -53,17 +53,20 @@ const Search = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 200)}
-          className="w-[400px] px-4 py-2 border border-gray-300 rounded-full outline-none focus:ring-2 focus:ring-amber-500 shadow-sm"
+          className="w-full px-4 py-2 border border-gray-300 rounded-full outline-none focus:ring-2 focus:ring-amber-500 shadow-sm"
         />
 
         {/* 🔽 RESULTS */}
         {open && searchTerm && (
-          <div className="absolute top-12 left-0 w-[400px] bg-white border border-gray-200 shadow-lg rounded-lg z-50 max-h-72 overflow-y-auto">
+          <div 
+            className="absolute top-12 left-0 w-full bg-white border border-gray-200 shadow-lg rounded-lg z-50 max-h-72 overflow-y-auto"
+            onMouseDown={(e) => e.preventDefault()}
+          >
             
             {filteredProducts.length > 0 ? (
               <>
                 {filteredProducts.map((p) => (
-                  <Link key={p.id} to={`/product/${p.id}`}>
+                  <Link key={p.id} to={`/product/${p.id}`} onClick={() => { setOpen(false); setSearchTerm(''); }}>
                     <div className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg transition">
                       <img
                         src={p.img}
@@ -83,7 +86,7 @@ const Search = () => {
                 ))}
 
                 {/* 🔥 View All */}
-                <Link to={`/search?q=${searchTerm}`}>
+                <Link to={`/search?q=${searchTerm}`} onClick={() => { setOpen(false); setSearchTerm(''); }}>
                   <div className="text-center text-amber-600 text-sm py-2 hover:underline">
                     View all results
                   </div>
@@ -98,16 +101,17 @@ const Search = () => {
         )}
       </div>
 
-      {/* ================= MOBILE SEARCH ================= */}
-      <div className="lg:hidden">
-        <button onClick={() => setOpen(!open)}>
+      {/* ================= TABLET & MOBILE SEARCH (< lg) ================= */}
+      <div className="lg:hidden flex items-center justify-center">
+        <button onClick={() => setOpen(!open)} className="text-gray-700">
           <SearchIcon size={22} />
         </button>
 
         {open && (
           <div
-            className="absolute right-0 mt-2 bg-white border shadow-lg rounded-lg p-3 z-50 w-64"
+            className="absolute right-0 top-10 bg-white border shadow-lg rounded-lg p-3 z-50 w-64 md:w-[350px]"
             onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.preventDefault()}
           >
             {/* 🔍 INPUT */}
             <input
@@ -115,7 +119,8 @@ const Search = () => {
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md mb-2"
+              className="w-full px-3 py-2 border rounded-md mb-2 outline-none focus:ring-2 focus:ring-amber-500"
+              autoFocus
             />
 
             {/* 🔽 RESULTS */}
@@ -124,7 +129,7 @@ const Search = () => {
                 {filteredProducts.length > 0 ? (
                   <>
                     {filteredProducts.map((p) => (
-                      <Link key={p.id} to={`/product/${p.id}`}>
+                      <Link key={p.id} to={`/product/${p.id}`} onClick={() => { setOpen(false); setSearchTerm(''); }}>
                         <div className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg">
                           <img
                             src={p.img}
@@ -144,7 +149,7 @@ const Search = () => {
                     ))}
 
                     {/* 🔥 View All */}
-                    <Link to={`/search?q=${searchTerm}`}>
+                    <Link to={`/search?q=${searchTerm}`} onClick={() => { setOpen(false); setSearchTerm(''); }}>
                       <div className="text-center text-amber-600 text-sm py-2 hover:underline">
                         View all results
                       </div>

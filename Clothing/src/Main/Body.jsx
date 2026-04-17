@@ -34,9 +34,9 @@ const Body = () => {
       </section>
 
 
-      <section className="w-full h-96">
-  <div className="w-full  h-full">
-    <img src={heroImg} alt="Fashion showcase" />
+      <section className="w-full h-96 md:h-[500px]">
+  <div className="w-full h-full">
+    <img src={heroImg} alt="Fashion showcase" className="w-full h-full object-cover" />
   </div>
 </section>
 
