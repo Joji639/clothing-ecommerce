@@ -6,6 +6,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import ProductCard from '../Components/ProductCard';
 import toast from 'react-hot-toast';
+import heroImg from "../assests/pexelssss.jpeg";
 const Body = () => {
 
   const handleClick=()=>{
@@ -15,7 +16,7 @@ const Body = () => {
     <>
     
     <Nav/>
-    <main className="bg-amber-400overflow-x-hidden">
+    <main className="bg-amber-400 overflow-x-hidden">
 
       <section 
         className="relative h-64 bg-cover bg-center w-full max-w-full"
@@ -35,11 +36,7 @@ const Body = () => {
 
       <section className="w-full h-96">
   <div className="w-full  h-full">
-    <img 
-      src="/src/assests/pexelssss.jpeg" 
-      alt="Fashion showcase"
-      className="w-full h-full object-cover"
-    />
+    <img src={heroImg} alt="Fashion showcase" />
   </div>
 </section>
 
