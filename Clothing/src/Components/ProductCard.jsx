@@ -24,7 +24,7 @@ const ProductCard = ({ pcard = [] }) => {
             key={product.id}  
             className="relative shadow-md border p-2 hover:shadow-lg transition rounded-xl flex flex-col items-center"
           >
-            {/* Wishlist Button */}
+           
             <button
               className="absolute top-2 right-3"
               onClick={(e) => {

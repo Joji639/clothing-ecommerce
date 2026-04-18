@@ -33,7 +33,7 @@ const UserPage = () => {
   };
 
   
-  const filteredUsers = users.filter((u) => u.role !== "admin");
+  const filteredUsers = users.filter((u) => !u.is_superuser && u.role !== "admin" && u.username !== "admin");
   const handleDelete = async (id) => {
   const confirmDelete = window.confirm("Are you sure you want to delete this user?");
 

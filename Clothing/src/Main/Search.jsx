@@ -8,7 +8,7 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
 
-  // 🔹 Fetch products
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,7 +22,7 @@ const Search = () => {
     fetchData();
   }, []);
 
-  // 🔹 Close mobile search when resizing
+  
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -34,7 +34,7 @@ const Search = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🔥 Filter + LIMIT results (important)
+  
   const filteredProducts = products
     .filter((p) =>
       p.title?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -44,7 +44,6 @@ const Search = () => {
   return (
     <div className="relative w-full flex justify-end md:justify-center">
       
-      {/* ================= DESKTOP SEARCH (lg and up) ================= */}
       <div className="hidden lg:block w-full">
         <input
           type="text"
@@ -56,7 +55,7 @@ const Search = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded-full outline-none focus:ring-2 focus:ring-amber-500 shadow-sm"
         />
 
-        {/* 🔽 RESULTS */}
+        
         {open && searchTerm && (
           <div 
             className="absolute top-12 left-0 w-full bg-white border border-gray-200 shadow-lg rounded-lg z-50 max-h-72 overflow-y-auto"
@@ -85,7 +84,7 @@ const Search = () => {
                   </Link>
                 ))}
 
-                {/* 🔥 View All */}
+               
                 <Link to={`/search?q=${searchTerm}`} onClick={() => { setOpen(false); setSearchTerm(''); }}>
                   <div className="text-center text-amber-600 text-sm py-2 hover:underline">
                     View all results
@@ -101,7 +100,6 @@ const Search = () => {
         )}
       </div>
 
-      {/* ================= TABLET & MOBILE SEARCH (< lg) ================= */}
       <div className="lg:hidden flex items-center justify-center">
         <button onClick={() => setOpen(!open)} className="text-gray-700">
           <SearchIcon size={22} />
@@ -113,7 +111,7 @@ const Search = () => {
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.preventDefault()}
           >
-            {/* 🔍 INPUT */}
+            
             <input
               type="text"
               placeholder="Search..."
@@ -123,7 +121,7 @@ const Search = () => {
               autoFocus
             />
 
-            {/* 🔽 RESULTS */}
+            
             {searchTerm && (
               <div className="max-h-60 overflow-y-auto">
                 {filteredProducts.length > 0 ? (
@@ -148,7 +146,7 @@ const Search = () => {
                       </Link>
                     ))}
 
-                    {/* 🔥 View All */}
+                    
                     <Link to={`/search?q=${searchTerm}`} onClick={() => { setOpen(false); setSearchTerm(''); }}>
                       <div className="text-center text-amber-600 text-sm py-2 hover:underline">
                         View all results

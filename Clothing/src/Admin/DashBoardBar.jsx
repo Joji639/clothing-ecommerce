@@ -135,7 +135,6 @@ const DashBoardBar = () => {
         <List className=" ">
            <div className=" ">
             <ul className="text-center top-0 pt-0 mt-0 ">
-              {/* <Link to={'/dashboard'}><li className="p-3 px-6 hover:bg-gray-200 transition-all ease-in-out duration-150 text-center"><p className="text-center">{open?<p className="flex justify-between items-center gap-2">DASHBOARD<LuLayoutDashboard/></p>:<LuLayoutDashboard/>}</p></li></Link> */}
               <NavLink to={'/admin'}><li className="p-3 px-6 hover:bg-gray-200 transition-all ease-in-out duration-150 text-center"><p className="text-center">{open?<p className="flex justify-between items-center gap-2">DASHBOARD<LuLayoutDashboard/></p>:<LuLayoutDashboard/>}</p></li></NavLink>
 
 

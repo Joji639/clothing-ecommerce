@@ -65,8 +65,8 @@ const PaymentPage = () => {
 
       
       if (!singleProduct) {
-        SetCartItem([]);      // instant UI
-        await fetchCart();    // backend sync
+        SetCartItem([]);      
+        await fetchCart();    
       }
 
       resetForm();

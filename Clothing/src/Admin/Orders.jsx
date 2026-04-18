@@ -38,7 +38,7 @@ export default function OrdersAdminPage() {
             key={order.id}
             className="bg-white shadow-lg rounded-xl p-5 mb-6 border"
           >
-            {/* 🔹 Order Header */}
+            
             <div className="flex justify-between items-center mb-4">
               <div>
                 <h2 className="text-lg font-semibold">

@@ -35,7 +35,7 @@ const Nav = () => {
       
       <div className="max-w-6xl mx-auto px-2 py-3 flex items-center justify-between">
 
-        {/* ================= LEFT ================= */}
+        
         <div className="flex items-center gap-4 min-w-[180px]">
           
           

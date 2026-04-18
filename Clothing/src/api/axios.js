@@ -10,7 +10,7 @@ const api = axios.create({
   },
 });
 
-// ================= REQUEST INTERCEPTOR =================
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access");
@@ -24,25 +24,25 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ================= RESPONSE INTERCEPTOR =================
+
 api.interceptors.response.use(
   (response) => response,
 
   async (error) => {
     const originalRequest = error.config || {};
 
-    // ❌ DO NOT logout on 403
+    
     if (error.response?.status === 403) {
       console.warn("Access denied (403)");
       return Promise.reject(error);
     }
 
-    // Avoid infinite loop
+    
     if (originalRequest?.url?.includes("token/refresh")) {
       return Promise.reject(error);
     }
 
-    // 🔥 Handle 401 (token expired)
+    
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
